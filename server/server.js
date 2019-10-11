@@ -1,16 +1,15 @@
-
 const express = require ('express');
 const bodyParser = require('body-parser');
-const itemRouter = require('./routes/item.router')
+const router = require('./routes/item.router')
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/item', itemRouter);
+app.use('/item', router);
 
 // Serve back static files by default
-app.use(express.static('server/public'))
+app.use(express.static('build'))
 
 // Start listening for requests on a specific port
 const PORT = process.env.PORT || 5000;
