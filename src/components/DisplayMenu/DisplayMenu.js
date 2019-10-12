@@ -10,9 +10,7 @@ class DisplayMenu extends Component {
     render(){
         return (
             <div>
-                Test
-                {JSON.stringify(this.props.menu)}
-                {this.props.menu.map(item => <div key={item.id}>{item.name}, supplied by: {item.supplier_name}</div>)}
+                {/* {this.props.menu.map(item => <div key={item.id}>{item.name}, supplied by: {item.supplier_name}</div>)} */}
                 <CreateDish />
             </div>
         )
