@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import CreateDish from '../CreateDish/CreateDish';
 
 class DisplayMenu extends Component {
     componentDidMount(){
@@ -12,6 +13,7 @@ class DisplayMenu extends Component {
                 Test
                 {JSON.stringify(this.props.menu)}
                 {this.props.menu.map(item => <div key={item.id}>{item.name}, supplied by: {item.supplier_name}</div>)}
+                <CreateDish />
             </div>
         )
     }
