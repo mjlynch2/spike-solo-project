@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Select from 'react-select';
+import Creatable from 'react-select/creatable';
 import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import { TextField } from '@material-ui/core';
@@ -9,22 +9,37 @@ class CreateDish extends Component {
 
     state = {
         dishName: '',
-        ingredients: []
-    }
-    componentDidMount(){
-        this.props.dispatch({type: 'FETCH_ITEM'})
+        ingredients: [],
+        isLoading: false,
     }
 
-    handleChange = (value) => {
-        this.setState({ingredients: [...this.state.ingredients, value] })
+    componentDidMount(){
+        this.props.dispatch({type: 'FETCH_ITEM'});
     }
+
+    createNewIngredient = (name) => {
+        return ({label: name, value: name})
+    }
+
+    handleCreate = (newIngredientName) => {
+        this.setState({isLoading: true})
+        this.props.dispatch({type: 'ADD_INGREDIENT', payload: {name: newIngredientName}})
+        setTimeout(() => {
+            const newIngredient = this.createNewIngredient(newIngredientName);
+            console.log(newIngredient);
+            console.groupEnd();
+            this.setState({
+                isLoading: false,
+                ingredients: [...this.state.ingredients, newIngredient],
+            });
+        }, 1000);
+    };
+
+    handleChange = (value, actionMeta) => {
+        this.setState({ ingredients: [...this.state.ingredients, value] })
+    };
 
     render(){
-        const selectItems = this.props.item.map(item => {return {value: item.name, label: item.name}});
-        const addIngredientSelect = <Select 
-            options={selectItems}
-            onChange={this.handleChange} />
-        
         return(
             <div className="createDishDiv">
                 <TextField
@@ -35,7 +50,14 @@ class CreateDish extends Component {
                 />
                 <Divider variant="middle"/>
                 <div className="labelDiv">Add ingredient...</div>
-                <div className="selectDiv">{addIngredientSelect}</div>
+                <div className="selectDiv">
+                    <Creatable
+                        isClearable
+                        options={this.props.options}
+                        onCreateOption={this.handleCreate}
+                        onChange={this.handleChange} />
+                </div>
+                {/* {JSON.stringify(this.props.options)} */}
                 {this.state.ingredients == null ? '' : <ul>{this.state.ingredients.map((item, index) => <li key={index}>{item.value}</li>)}</ul>}
             </div>
         )
@@ -43,7 +65,7 @@ class CreateDish extends Component {
 }
 
 const mapStateToProps = reduxState => ({
-    item: reduxState.item
+    options: reduxState.ingredientOptions
 })
 
 export default connect(mapStateToProps)(CreateDish);

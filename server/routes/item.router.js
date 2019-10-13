@@ -25,6 +25,16 @@ router.get('/menu', (req, res) => {
 })
 
 // POST
+router.post('/ingredient', (req, res) => {
+    const query = `INSERT INTO "item" ("name") VALUES ($1);`;
+    const values = [req.body.name];
+    pool.query(query, values)
+        .then(() => {
+            res.sendStatus(201);
+        }).catch((error) => {
+            console.log('Error in server POST item:', error);
+        })
+})
 
 // PUT
 

@@ -14,12 +14,14 @@ import axios from 'axios';
 function* rootSaga() {
     yield takeEvery('FETCH_ITEM', fetchItem);
     yield takeEvery('FETCH_MENU', fetchMenu);
+    yield takeEvery('ADD_INGREDIENT', addIngredient);
 }
 
 function* fetchItem() {
     try {
         const response = yield axios.get('/item');
         yield put({ type: 'GET_ITEM', payload: response.data })
+        yield put({ type: 'SET_OPTIONS', payload: response.data})
     } catch (error) {
         console.log('Error in fetchItem:', String(error));   
     }
@@ -36,11 +38,32 @@ function* fetchMenu() {
     }
 }
 
+function* addIngredient(action) {
+    try {
+        yield axios.post(`/item/ingredient`, action.payload);
+        yield fetchItem();
+    } catch(error){
+        console.log('Error in addIngredient:', error);
+    }
+}
+
 // Reducer for items
 const item = (state = [], action) => {
     switch (action.type) {
         case 'GET_ITEM':
             return action.payload;
+        default:
+            return state;
+    }
+}
+
+const ingredientOptions = (state=[], action) => {
+    switch (action.type) {
+        case 'SET_OPTIONS':
+            // console.log(action.payload);
+            const selectItems = action.payload.map(item => { return { value: item.name, label: item.name } });
+            console.log(selectItems);
+            return selectItems;
         default:
             return state;
     }
@@ -62,7 +85,8 @@ const sagaMiddleware = createSagaMiddleware();
 const storeInstance = createStore(
     combineReducers({
         item,
-        menu
+        menu,
+        ingredientOptions
     }),
     // Add sagaMiddleware to our store
     applyMiddleware(sagaMiddleware, logger),
