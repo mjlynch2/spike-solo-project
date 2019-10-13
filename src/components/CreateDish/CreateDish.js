@@ -1,65 +1,43 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import { TextField } from '@material-ui/core';
+import './CreateDish.css';
 
 class CreateDish extends Component {
 
     state = {
-        isOpen: false
+        dishName: '',
+        ingredients: []
     }
     componentDidMount(){
         this.props.dispatch({type: 'FETCH_ITEM'})
     }
 
-    handleOpen = () => {
-        this.setState({isOpen: true})
-    }
-
-    handleClose = () => {
-        this.setState({isOpen: false})
+    handleChange = (value) => {
+        this.setState({ingredients: [...this.state.ingredients, value] })
     }
 
     render(){
         const selectItems = this.props.item.map(item => {return {value: item.name, label: item.name}});
-        const addIngredientSelect = <Select options={selectItems} isMulti/>
+        const addIngredientSelect = <Select 
+            options={selectItems}
+            onChange={this.handleChange} />
+        
         return(
-            <>
-                <Typography variant='h4'>Create New Dish</Typography>
-                <Fab color="primary" size="medium" aria-label="Add" onClick={this.handleOpen}><AddIcon/></Fab>
-                {/* <Select options = {selectItems}/> */}
-                <Dialog
-                    open={this.state.isOpen}
-                    onClose={this.handleClose}
-                    aria-labelledby="form-dialog-title"
-                    fullScreen
-                >
-                    <DialogTitle id="form-dialog-title">Add Ingredient</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            Add an ingredient and amount
-                        </DialogContentText>
-                        {addIngredientSelect}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleClose} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this.handleClose} color="primary">
-                            Add Ingredient
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </>
+            <div className="createDishDiv">
+                <TextField
+                    label="Dish name"
+                    placeholder="e.g. Fusilli with basil pesto"
+                    margin="normal"
+                    fullWidth
+                />
+                <Divider variant="middle"/>
+                <div className="labelDiv">Add ingredient...</div>
+                <div className="selectDiv">{addIngredientSelect}</div>
+                {this.state.ingredients == null ? '' : <ul>{this.state.ingredients.map((item, index) => <li key={index}>{item.value}</li>)}</ul>}
+            </div>
         )
     }
 }
