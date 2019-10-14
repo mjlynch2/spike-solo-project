@@ -26,8 +26,6 @@ class CreateDish extends Component {
         this.props.dispatch({type: 'ADD_INGREDIENT', payload: {name: newIngredientName}})
         setTimeout(() => {
             const newIngredient = this.createNewIngredient(newIngredientName);
-            console.log(newIngredient);
-            console.groupEnd();
             this.setState({
                 isLoading: false,
                 ingredients: [...this.state.ingredients, newIngredient],
